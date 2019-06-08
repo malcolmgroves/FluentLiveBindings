@@ -123,6 +123,11 @@ type
   end;
 
 
+  TBindingsListHelper = class helper for TBindingsList
+    function Bind(const Source : TComponent) : IComponentSource; virtual;
+    function BindList(const Source : TComponent) : IListComponentSource; virtual;
+  end;
+
 implementation
 
 
@@ -340,6 +345,32 @@ begin
   FBindingState.Target := Name;
 
   Result := TDataSetTarget.Create(FBindingState) as IDataSetTarget;
+end;
+
+{ TBindingsListHelper }
+
+function TBindingsListHelper.Bind(const Source: TComponent): IComponentSource;
+var
+  LBindingState : TBindingState;
+begin
+  LBindingState := TBindingState.Create(self);
+  LBindingState.Source := Source;
+  LBindingState.Direction := SourceToTarget;
+
+  Result := TComponentSource.Create(LBindingState) as IComponentSource;
+end;
+
+function TBindingsListHelper.BindList(
+  const Source: TComponent): IListComponentSource;
+var
+  LBindingState : TBindingState;
+begin
+  LBindingState := TBindingState.Create(self);
+  LBindingState.Source := Source;
+  LBindingState.SourceIsList := True;
+  LBindingState.Direction := Bidirectional;
+
+  Result := TListComponentSource.Create(LBindingState) as IListComponentSource;
 end;
 
 end.
