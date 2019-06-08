@@ -6,17 +6,17 @@ uses
 
 type
 
-  TCustomBindingState = class
+  TBindingState = class
   private
-    FTrack: Boolean;
-  protected
     FSource : TObject;
     FDestination: TObject;
     FPropertyName: String;
     FActive : Boolean;
     FBindingsList : TBindingsList;
+    FTrack: Boolean;
   public
     constructor Create(BindingsList : TBindingsList); virtual;
+    property BindingsList : TBindingsList read FBindingsList;
     property Source : TObject read FSource write FSource;
     property Destination : TObject read FDestination write FDestination;
     property PropertyName : String read FPropertyName write FPropertyName;
@@ -24,54 +24,60 @@ type
     property Track : Boolean read FTrack write FTrack;
   end;
 
-  TControlBindingState = class(TCustomBindingState)
-  public
-    destructor Destroy; override;
-  end;
-
-  IDestinationBinding = interface
+  IComponentTarget = interface
   ['{225A2C76-E6C0-40EC-9396-69150EBE96C8}']
-    function Active : IDestinationBinding;
-    function Inactive : IDestinationBinding;
-    function Track : IDestinationBinding;
+    function Active : IComponentTarget;
+    function Inactive : IComponentTarget;
+    function Track : IComponentTarget;
   end;
 
-  ISourceBinding = interface
+  IBaseSource = interface
+  ['{D18910B1-188F-434A-BB74-B171F024F00A}']
+    function GetBindingState: TBindingState;
+    property BindingState : TBindingState read GetBindingState;
+  end;
+
+  IComponentSource = interface(IBaseSource)
   ['{D16A2933-9497-4E8F-AB39-20B3D350D6D6}']
-    function GetBindingState: TCustomBindingState;
-    function ToTarget(Destination : TComponent; PropertyName : string): IDestinationBinding;
-    property BindingState : TCustomBindingState read GetBindingState;
+    function ToComponent(Name : TComponent; PropertyName : string): IComponentTarget;
   end;
 
-  TDestinationBinding = class(TInterfacedObject, IDestinationBinding)
-  private
-    FBindingState : TCustomBindingState;
-  public
-    constructor Create(BindingState : TCustomBindingState); reintroduce;
-    function Active : IDestinationBinding;
-    function Inactive : IDestinationBinding;
-    function Track : IDestinationBinding;
-  end;
-
-
-  TSourceBinding = class(TInterfacedObject, ISourceBinding)
-  private
-    FBindingState : TCustomBindingState;
+  TBaseTarget = class(TInterfacedObject)
   protected
-    function GetBindingState: TCustomBindingState;
+    FBindingState : TBindingState;
   public
-    property BindingState : TCustomBindingState read GetBindingState;
-    constructor Create(BindingState : TCustomBindingState); reintroduce;
+    constructor Create(BindingState : TBindingState); reintroduce;
     destructor Destroy; override;
-    function ToTarget(Destination : TComponent; PropertyName : string): IDestinationBinding;
+  end;
+
+  TComponentTarget = class(TBaseTarget, IComponentTarget)
+  public
+    destructor Destroy; override;
+    function Active : IComponentTarget;
+    function Inactive : IComponentTarget;
+    function Track : IComponentTarget;
+  end;
+
+  TBaseSource = class(TInterfacedObject)
+  private
+    FBindingState : TBindingState;
+  protected
+    function GetBindingState: TBindingState;
+  public
+    property BindingState : TBindingState read GetBindingState;
+    constructor Create(BindingState : TBindingState); reintroduce;
+  end;
+
+  TComponentSource = class(TBaseSource, IComponentSource)
+  public
+    function ToComponent(Name : TComponent; PropertyName : string): IComponentTarget;
   end;
 
 
 implementation
 
-{ TCustomBindingState }
 
-constructor TCustomBindingState.Create(BindingsList: TBindingsList);
+constructor TBindingState.Create(BindingsList: TBindingsList);
 begin
   FBindingsList := BindingsList;
   FActive := True;
@@ -81,79 +87,76 @@ end;
 { TSourceBinding }
 
 
-function TSourceBinding.ToTarget(
-  Destination: TComponent; PropertyName : string): IDestinationBinding;
+function TComponentSource.ToComponent(
+  Name: TComponent; PropertyName : string): IComponentTarget;
 begin
-  FBindingState.Destination := Destination;
+  FBindingState.Destination := Name;
   FBindingState.PropertyName := PropertyName;
 
-  Result := TDestinationBinding.Create(FBindingState) as IDestinationBinding;
+  Result := TComponentTarget.Create(FBindingState) as IComponentTarget;
 end;
 
-constructor TSourceBinding.Create(BindingState: TCustomBindingState);
-begin
-  inherited Create;
-  FBindingState := BindingState;
-end;
-
-destructor TSourceBinding.Destroy;
-begin
-  FBindingState.Free;
-  inherited;
-end;
-
-function TSourceBinding.GetBindingState: TCustomBindingState;
-begin
-  Result := FBindingState;
-end;
 
 { TDestinationBinding }
 
-function TDestinationBinding.Active : IDestinationBinding;
+function TComponentTarget.Active : IComponentTarget;
 begin
   FBindingState.Active := True;
   Result := self;
 end;
 
-constructor TDestinationBinding.Create(BindingState: TCustomBindingState);
+
+destructor TComponentTarget.Destroy;
+var
+  LLink : TLinkControlToProperty;
 begin
-  FBindingState := BindingState;
+  LLink := TLinkControlToProperty.Create(nil);
+  LLink.BindingsList := FBindingState.BindingsList;
+  LLink.Control := TComponent(FBindingState.Source);
+  LLink.Component := TComponent(FBindingState.Destination);
+  LLink.ComponentProperty := FBindingState.PropertyName;
+  LLink.Track := FBindingState.Track;
+  LLink.Active := FBindingState.Active;
+
+  inherited;
 end;
 
-function TDestinationBinding.Inactive : IDestinationBinding;
+function TComponentTarget.Inactive : IComponentTarget;
 begin
   FBindingState.Active := False;
   Result := self;
 end;
 
-function TDestinationBinding.Track: IDestinationBinding;
+function TComponentTarget.Track: IComponentTarget;
 begin
   FBindingState.Track := True;
   Result := self;
 end;
 
-{ TControlBindingState }
+{ TBaseSource }
 
-destructor TControlBindingState.Destroy;
-var
-  LLink : TLinkControlToProperty;
+constructor TBaseSource.Create(BindingState: TBindingState);
 begin
-//  FLinkCOntrolToProperty := TLinkControlToProperty.Create(nil);
-//  FLinkCOntrolToProperty.BindingsList := BindingsList1;
-//  FLinkCOntrolToProperty.Control := Edit2;
-//  FLinkCOntrolToProperty.Component := Label2;
-//  FLinkCOntrolToProperty.ComponentProperty := 'Text';
-//  FLinkCOntrolToProperty.Active := True;
-
-  LLink := TLinkControlToProperty.Create(nil);
-  LLink.BindingsList := FBindingsList;
-  LLink.Control := TComponent(FSource);
-  LLink.Component := TComponent(FDestination);
-  LLink.ComponentProperty := FPropertyName;
-  LLink.Track := FTrack;
-  LLink.Active := FActive;
+  inherited Create;
+  FBindingState := BindingState;
+end;
 
 
+function TBaseSource.GetBindingState: TBindingState;
+begin
+  Result := FBindingState;
+end;
+
+{ TBaseTarget }
+
+constructor TBaseTarget.Create(BindingState: TBindingState);
+begin
+  FBindingState := BindingState;
+end;
+
+destructor TBaseTarget.Destroy;
+begin
+  FBindingState.Free;
   inherited;
 end;
 

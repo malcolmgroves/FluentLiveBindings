@@ -9,21 +9,21 @@ type
   private
   protected
   public
-    function Bind(const Source : TComponent) : ISourceBinding; virtual;
+    function Bind(const Source : TComponent) : IComponentSource; virtual;
   end;
 
 implementation
 
 { TCodeBindingsList }
 
-function TCodeBindingsList.Bind(const Source: TComponent): ISourceBinding;
+function TCodeBindingsList.Bind(const Source: TComponent): IComponentSource;
 var
-  LControlBindingState : TControlBindingState;
+  LBindingState : TBindingState;
 begin
-  LControlBindingState := TControlBindingState.Create(self);
-  LCOntrolBindingState.Source := Source;
+  LBindingState := TBindingState.Create(self);
+  LBindingState.Source := Source;
 
-  Result := TSourceBinding.Create(LControlBindingState) as ISourceBinding;
+  Result := TComponentSource.Create(LBindingState) as IComponentSource;
 end;
 
 end.
