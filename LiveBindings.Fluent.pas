@@ -88,6 +88,17 @@ type
     function ToExpression(Scope : TComponent; Expression : string): IExpressionSource;
   end;
 
+
+  TBindingsListHelper = class helper for TBindingsList
+    function Bind(const Target : TComponent) : IComponentTarget;  overload;
+    function Bind(const Scope : TComponent; Expression : string) : IExpressionTarget; overload;
+    function BindList(const Target : TComponent) : IListComponentTarget; virtual;
+  end;
+
+implementation
+
+type
+
   TBaseSource = class(TInterfacedObject)
   protected
     FBindingState : TBindingState;
@@ -153,14 +164,6 @@ type
     function ToExpression(Scope : TComponent; Expression : string): IExpressionSource;
   end;
 
-
-  TBindingsListHelper = class helper for TBindingsList
-    function Bind(const Target : TComponent) : IComponentTarget;  overload;
-    function Bind(const Scope : TComponent; Expression : string) : IExpressionTarget; overload;
-    function BindList(const Target : TComponent) : IListComponentTarget; virtual;
-  end;
-
-implementation
 
 
 constructor TBindingState.Create(BindingsList: TBindingsList);
