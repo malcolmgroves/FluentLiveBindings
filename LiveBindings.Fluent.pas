@@ -1,4 +1,4 @@
-unit CodeBindings;
+unit LiveBindings.Fluent;
 
 interface
 uses
@@ -46,15 +46,15 @@ type
     function FromSourceToComponent : IComponentSource;
   end;
 
-  IDatasetSource = interface
+  IBindSourceSource = interface
   ['{D25D3FE7-9BB1-4E4E-8510-9457762AF067}']
-    function Active : IDatasetSource;
-    function Inactive : IDatasetSource;
-    function Track : IDatasetSource;
-    function Field(Fieldname : string) : IDatasetSource;
-    function BiDirectional : IDatasetSource;
-    function FromComponentToData : IDatasetSource;
-    function FromDataToComponent : IDatasetSource;
+    function Active : IBindSourceSource;
+    function Inactive : IBindSourceSource;
+    function Track : IBindSourceSource;
+    function Field(Fieldname : string) : IBindSourceSource;
+    function BiDirectional : IBindSourceSource;
+    function FromComponentToData : IBindSourceSource;
+    function FromDataToComponent : IBindSourceSource;
   end;
 
   IExpressionSource = interface
@@ -75,12 +75,12 @@ type
   IComponentTarget = interface(IBaseTarget)
   ['{D16A2933-9497-4E8F-AB39-20B3D350D6D6}']
     function ToComponent(Name : TComponent; PropertyName : string): IComponentSource;
-    function ToDataset(Name : TBindSourceDB): IDataSetSource;
+    function ToBindSource(Name : TBindSourceDB): IBindSourceSource;
   end;
 
   IListComponentTarget = interface(IBaseTarget)
   ['{7062E2A8-E5FA-4C51-B312-55D53D68AC07}']
-    function ToDataset(Name : TBindSourceDB): IDataSetSource;
+    function ToBindSource(Name : TBindSourceDB): IBindSourceSource;
   end;
 
   IExpressionTarget = interface(IBaseTarget)
@@ -107,16 +107,16 @@ type
     function FromSourceToComponent : IComponentSource;
   end;
 
-  TDatasetSource = class(TBaseSource, IDatasetSource)
+  TBindSourceSource = class(TBaseSource, IBindSourceSource)
   public
     destructor Destroy; override;
-    function Active : IDatasetSource;
-    function Inactive : IDatasetSource;
-    function Track : IDatasetSource;
-    function Field(Fieldname : string) : IDatasetSource;
-    function BiDirectional : IDatasetSource;
-    function FromComponentToData : IDatasetSource;
-    function FromDataToComponent : IDatasetSource;
+    function Active : IBindSourceSource;
+    function Inactive : IBindSourceSource;
+    function Track : IBindSourceSource;
+    function Field(Fieldname : string) : IBindSourceSource;
+    function BiDirectional : IBindSourceSource;
+    function FromComponentToData : IBindSourceSource;
+    function FromDataToComponent : IBindSourceSource;
   end;
 
   TExpressionSource = class(TBaseSource, IExpressionSource)
@@ -142,11 +142,11 @@ type
   TComponentTarget = class(TBaseTarget, IComponentTarget)
   public
     function ToComponent(Name : TComponent; PropertyName : string): IComponentSource;
-    function ToDataset(Name : TBindSourceDB): IDataSetSource;
+    function ToBindSource(Name : TBindSourceDB): IBindSourceSource;
   end;
 
   TListComponentTarget = class(TBaseTarget, IListComponentTarget)
-    function ToDataset(Name : TBindSourceDB): IDataSetSource;
+    function ToBindSource(Name : TBindSourceDB): IBindSourceSource;
   end;
 
   TExpressionTarget = class(TBaseTarget, IExpressionTarget)
@@ -279,36 +279,36 @@ begin
   inherited;
 end;
 
-function TComponentTarget.ToDataset(Name: TBindSourceDB): IDataSetSource;
+function TComponentTarget.ToBindSource(Name: TBindSourceDB): IBindSourceSource;
 begin
   FBindingState.Source := Name;
   FBindingState.Direction := Bidirectional;
 
-  Result := TDataSetSource.Create(FBindingState) as IDataSetSource;
+  Result := TBindSourceSource.Create(FBindingState) as IBindSourceSource;
 end;
 
-{ TDatasetSource }
+{ TBindSourceSource }
 
-function TDatasetSource.Active: IDatasetSource;
+function TBindSourceSource.Active: IBindSourceSource;
 begin
   FBindingState.Active := True;
   Result := self;
 end;
 
 
-function TDatasetSource.BiDirectional: IDatasetSource;
+function TBindSourceSource.BiDirectional: IBindSourceSource;
 begin
   FBindingState.Direction := TBindDirection.Bidirectional;
   Result := self;
 end;
 
-function TDatasetSource.FromComponentToData: IDatasetSource;
+function TBindSourceSource.FromComponentToData: IBindSourceSource;
 begin
   FBindingState.Direction := TBindDirection.TargetToSource;
   Result := self;
 end;
 
-destructor TDatasetSource.Destroy;
+destructor TBindSourceSource.Destroy;
 var
   LLink : TLinkControlToField;
   LListLink : TLinkListControlToField;
@@ -346,25 +346,25 @@ begin
   inherited;
 end;
 
-function TDatasetSource.Field(Fieldname: string): IDatasetSource;
+function TBindSourceSource.Field(Fieldname: string): IBindSourceSource;
 begin
   FBindingState.Field := Fieldname;
   Result := self;
 end;
 
-function TDatasetSource.FromDataToComponent: IDatasetSource;
+function TBindSourceSource.FromDataToComponent: IBindSourceSource;
 begin
   FBindingState.Direction := TBindDirection.SourceToTarget;
   Result := self;
 end;
 
-function TDatasetSource.Inactive: IDatasetSource;
+function TBindSourceSource.Inactive: IBindSourceSource;
 begin
   FBindingState.Active := False;
   Result := self;
 end;
 
-function TDatasetSource.Track: IDatasetSource;
+function TBindSourceSource.Track: IBindSourceSource;
 begin
   FBindingState.Track := True;
   Result := self;
@@ -372,11 +372,11 @@ end;
 
 { TListComponentTarget }
 
-function TListComponentTarget.ToDataset(Name: TBindSourceDB): IDataSetSource;
+function TListComponentTarget.ToBindSource(Name: TBindSourceDB): IBindSourceSource;
 begin
   FBindingState.Source := Name;
 
-  Result := TDataSetSource.Create(FBindingState) as IDataSetSource;
+  Result := TBindSourceSource.Create(FBindingState) as IBindSourceSource;
 end;
 
 { TBindingsListHelper }
