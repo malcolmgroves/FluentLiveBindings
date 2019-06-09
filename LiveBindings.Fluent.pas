@@ -21,19 +21,23 @@ type
     FTargetIsList: boolean;
     FTargetExpression: string;
     FSourceExpression: string;
+    FFormat: string;
+    FParse: string;
   public
     constructor Create(BindingsList : TBindingsList); virtual;
     property BindingsList : TBindingsList read FBindingsList;
     property Target : TObject read FTarget write FTarget;
-    property Source : TObject read FSource write FSource;
     property TargetIsList : boolean read FTargetIsList write FTargetIsList;
     property TargetExpression: string read FTargetExpression write FTargetExpression;
+    property Source : TObject read FSource write FSource;
     property SourceExpression: string read FSourceExpression write FSourceExpression;
     property PropertyName : String read FPropertyName write FPropertyName;
     property Active : Boolean read FActive write FActive;
     property Track : Boolean read FTrack write FTrack;
     property Field : string read FField write FField;
     property Direction : TBindDirection read FDirection write FDirection;
+    property Format: string read FFormat write FFormat;
+    property Parse: string read FParse write FParse;
   end;
 
   IComponentSource = interface
@@ -74,12 +78,16 @@ type
 
   IComponentTarget = interface(IBaseTarget)
   ['{D16A2933-9497-4E8F-AB39-20B3D350D6D6}']
+    function Format(CustomFormat : string) : IComponentTarget;
+    function Parse(CustomParse : string) : IComponentTarget;
     function ToComponent(Name : TComponent; PropertyName : string): IComponentSource;
     function ToBindSource(Name : TBindSourceDB): IBindSourceSource;
   end;
 
   IListComponentTarget = interface(IBaseTarget)
   ['{7062E2A8-E5FA-4C51-B312-55D53D68AC07}']
+    function Format(CustomFormat : string) : IListComponentTarget;
+    function Parse(CustomParse : string) : IListComponentTarget;
     function ToBindSource(Name : TBindSourceDB): IBindSourceSource;
   end;
 
@@ -152,11 +160,15 @@ type
 
   TComponentTarget = class(TBaseTarget, IComponentTarget)
   public
+    function Format(CustomFormat : string) : IComponentTarget;
+    function Parse(CustomParse : string) : IComponentTarget;
     function ToComponent(Name : TComponent; PropertyName : string): IComponentSource;
     function ToBindSource(Name : TBindSourceDB): IBindSourceSource;
   end;
 
   TListComponentTarget = class(TBaseTarget, IListComponentTarget)
+    function Format(CustomFormat : string) : IListComponentTarget;
+    function Parse(CustomParse : string) : IListComponentTarget;
     function ToBindSource(Name : TBindSourceDB): IBindSourceSource;
   end;
 
@@ -214,6 +226,8 @@ begin
     LLink.Component := TComponent(FBindingState.Source);
     LLink.ComponentProperty := FBindingState.PropertyName;
     LLink.Track := FBindingState.Track;
+    LLink.CustomFormat := FBindingState.Format;
+    LLink.CustomParse := FBindingState.Parse;
     LLink.Active := FBindingState.Active;
   end;
 
@@ -225,6 +239,8 @@ begin
     LLink.Component := TComponent(FBindingState.Target);
     LLink.ComponentProperty := FBindingState.PropertyName;
     LLink.Track := FBindingState.Track;
+    LLink.CustomFormat := FBindingState.Format;
+    LLink.CustomParse := FBindingState.Parse;
     LLink.Active := FBindingState.Active;
   end;
 
@@ -282,6 +298,18 @@ begin
   inherited;
 end;
 
+function TComponentTarget.Format(CustomFormat: string): IComponentTarget;
+begin
+  FBindingState.Format := CustomFormat;
+  Result := self;
+end;
+
+function TComponentTarget.Parse(CustomParse: string): IComponentTarget;
+begin
+  FBindingState.Parse := CustomParse;
+  Result := self;
+end;
+
 function TComponentTarget.ToBindSource(Name: TBindSourceDB): IBindSourceSource;
 begin
   FBindingState.Source := Name;
@@ -323,6 +351,8 @@ begin
     LListLink.Control := TComponent(FBindingState.Target);
     LListLink.DataSource := TBindSourceDB(FBindingState.FSource);
     LListLink.FieldName := FBindingState.Field;
+    LListLink.CustomFormat := FBindingState.Format;
+    LListLink.CustomParse := FBindingState.Parse;
     case FBindingState.Direction of
       TBindDirection.TargetToSource: LListLink.Direction := linkControlToData;
       TBindDirection.SourceToTarget: LListLink.Direction := linkDataToControl;
@@ -337,6 +367,8 @@ begin
     LLink.Control := TComponent(FBindingState.Target);
     LLink.DataSource := TBindSourceDB(FBindingState.FSource);
     LLink.FieldName := FBindingState.Field;
+    LLink.CustomFormat := FBindingState.Format;
+    LLink.CustomParse := FBindingState.Parse;
     case FBindingState.Direction of
       TBindDirection.TargetToSource: LLink.Direction := linkControlToData;
       TBindDirection.SourceToTarget: LLink.Direction := linkDataToControl;
@@ -374,6 +406,19 @@ begin
 end;
 
 { TListComponentTarget }
+
+function TListComponentTarget.Format(
+  CustomFormat: string): IListComponentTarget;
+begin
+  FBindingState.Format := CustomFormat;
+  Result := self;
+end;
+
+function TListComponentTarget.Parse(CustomParse: string): IListComponentTarget;
+begin
+  FBindingState.Parse := CustomParse;
+  Result := self;
+end;
 
 function TListComponentTarget.ToBindSource(Name: TBindSourceDB): IBindSourceSource;
 begin
