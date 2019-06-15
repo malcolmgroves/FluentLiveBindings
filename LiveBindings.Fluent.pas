@@ -8,6 +8,77 @@ type
   TBindDirection = (TargetToSource, SourceToTarget, Bidirectional);
   TTargetType = (List, Grid, Control);
 
+  IComponentSource = interface
+  ['{225A2C76-E6C0-40EC-9396-69150EBE96C8}']
+    function Active : IComponentSource;
+    function Inactive : IComponentSource;
+    function BiDirectional : IComponentSource;
+    function FromComponentToSource : IComponentSource;
+    function FromSourceToComponent : IComponentSource;
+  end;
+
+  IBindSourceSource = interface
+  ['{D25D3FE7-9BB1-4E4E-8510-9457762AF067}']
+    function Active : IBindSourceSource;
+    function Inactive : IBindSourceSource;
+  end;
+
+  IFieldSource = interface (IBindSourceSource)
+  ['{9FC9A36D-0DE6-482A-BF93-B32BC377335E}']
+    function BiDirectional : IFieldSource;
+    function FromComponentToData : IFieldSource;
+    function FromDataToComponent : IFieldSource;
+  end;
+
+  IExpressionSource = interface
+  ['{56247E48-C735-4FD8-831E-6AB36C0C3C71}']
+    function Active : IExpressionSource;
+    function Inactive : IExpressionSource;
+    function BiDirectional : IExpressionSource;
+    function FromComponentToData : IExpressionSource;
+    function FromDataToComponent : IExpressionSource;
+  end;
+
+  IComponentTarget = interface
+  ['{D16A2933-9497-4E8F-AB39-20B3D350D6D6}']
+    function Format(CustomFormat : string) : IComponentTarget;
+    function Parse(CustomParse : string) : IComponentTarget;
+    function Track : IComponentTarget;
+    function ToComponent(Name : TComponent; PropertyName : string): IComponentSource;
+    function ToField(Name : TBindSourceDB; Field : String): IFieldSource;
+  end;
+
+  IListComponentTarget = interface
+  ['{7062E2A8-E5FA-4C51-B312-55D53D68AC07}']
+    function Format(CustomFormat : string) : IListComponentTarget;
+    function Parse(CustomParse : string) : IListComponentTarget;
+    function ToField(Name : TBindSourceDB; Field : string): IFieldSource;
+  end;
+
+  IExpressionTarget = interface
+  ['{C5F7D86C-C934-440E-BE12-225378356164}']
+    function ToExpression(Scope : TComponent; Expression : string): IExpressionSource;
+  end;
+
+  IGridTarget = interface
+  ['{4B7B4021-E116-4AE0-BD55-C76C4D5E39CF}']
+    function DefaultColumnWidth(Width : Integer): IGridTarget;
+    function ToBindSource(Name : TBindSourceDB): IBindSourceSource;
+  end;
+
+
+  TBindingsListHelper = class helper for TBindingsList
+    function BindComponent(const Target : TComponent) : IComponentTarget;
+    function BindList(const Target : TComponent) : IListComponentTarget; virtual;
+    function BindGrid(const Target : TCustomGrid) : IGridTarget; virtual;
+    function BindExpression(const Scope : TComponent; Expression : string) : IExpressionTarget; experimental;
+  end;
+
+implementation
+uses
+  Data.Bind.Grid;
+
+type
   TBindingState = class
   private
     FTarget : TObject;
@@ -42,83 +113,6 @@ type
     property DefaultColumnWidth: Integer read FDefaultColumnWidth write FDefaultColumnWidth;
   end;
 
-  IComponentSource = interface
-  ['{225A2C76-E6C0-40EC-9396-69150EBE96C8}']
-    function Active : IComponentSource;
-    function Inactive : IComponentSource;
-    function BiDirectional : IComponentSource;
-    function FromComponentToSource : IComponentSource;
-    function FromSourceToComponent : IComponentSource;
-  end;
-
-  IBindSourceSource = interface
-  ['{D25D3FE7-9BB1-4E4E-8510-9457762AF067}']
-    function Active : IBindSourceSource;
-    function Inactive : IBindSourceSource;
-  end;
-
-  IFieldSource = interface (IBindSourceSource)
-  ['{9FC9A36D-0DE6-482A-BF93-B32BC377335E}']
-    function BiDirectional : IFieldSource;
-    function FromComponentToData : IFieldSource;
-    function FromDataToComponent : IFieldSource;
-  end;
-
-  IExpressionSource = interface
-  ['{56247E48-C735-4FD8-831E-6AB36C0C3C71}']
-    function Active : IExpressionSource;
-    function Inactive : IExpressionSource;
-    function BiDirectional : IExpressionSource;
-    function FromComponentToData : IExpressionSource;
-    function FromDataToComponent : IExpressionSource;
-  end;
-
-  IBaseTarget = interface
-  ['{D18910B1-188F-434A-BB74-B171F024F00A}']
-    function GetBindingState: TBindingState;
-    property BindingState : TBindingState read GetBindingState;
-  end;
-
-  IComponentTarget = interface(IBaseTarget)
-  ['{D16A2933-9497-4E8F-AB39-20B3D350D6D6}']
-    function Format(CustomFormat : string) : IComponentTarget;
-    function Parse(CustomParse : string) : IComponentTarget;
-    function Track : IComponentTarget;
-    function ToComponent(Name : TComponent; PropertyName : string): IComponentSource;
-    function ToField(Name : TBindSourceDB; Field : String): IFieldSource;
-  end;
-
-  IListComponentTarget = interface(IBaseTarget)
-  ['{7062E2A8-E5FA-4C51-B312-55D53D68AC07}']
-    function Format(CustomFormat : string) : IListComponentTarget;
-    function Parse(CustomParse : string) : IListComponentTarget;
-    function ToField(Name : TBindSourceDB; Field : string): IFieldSource;
-  end;
-
-  IExpressionTarget = interface(IBaseTarget)
-  ['{C5F7D86C-C934-440E-BE12-225378356164}']
-    function ToExpression(Scope : TComponent; Expression : string): IExpressionSource;
-  end;
-
-  IGridTarget = interface(IBaseTarget)
-  ['{4B7B4021-E116-4AE0-BD55-C76C4D5E39CF}']
-    function DefaultColumnWidth(Width : Integer): IGridTarget;
-    function ToBindSource(Name : TBindSourceDB): IBindSourceSource;
-  end;
-
-
-  TBindingsListHelper = class helper for TBindingsList
-    function BindComponent(const Target : TComponent) : IComponentTarget;
-    function BindList(const Target : TComponent) : IListComponentTarget; virtual;
-    function BindGrid(const Target : TCustomGrid) : IGridTarget; virtual;
-    function BindExpression(const Scope : TComponent; Expression : string) : IExpressionTarget; experimental;
-  end;
-
-implementation
-uses
-  Data.Bind.Grid;
-
-type
 
   TBaseSource = class(TInterfacedObject)
   protected
@@ -164,12 +158,9 @@ type
   end;
 
   TBaseTarget = class(TInterfacedObject)
-  private
-    FBindingState : TBindingState;
   protected
-    function GetBindingState: TBindingState;
+    FBindingState : TBindingState;
   public
-    property BindingState : TBindingState read GetBindingState;
     constructor Create(BindingState : TBindingState); reintroduce;
   end;
 
@@ -208,9 +199,6 @@ begin
   FTargetType := Control;
 end;
 
-{ TTargetBinding }
-
-
 function TComponentTarget.ToComponent(
   Name: TComponent; PropertyName : string): IComponentSource;
 begin
@@ -219,8 +207,6 @@ begin
 
   Result := TComponentSource.Create(FBindingState) as IComponentSource;
 end;
-
-
 
 function TComponentTarget.Track: IComponentTarget;
 begin
@@ -233,7 +219,6 @@ begin
   FBindingState.Active := True;
   Result := self;
 end;
-
 
 function TComponentSource.BiDirectional: IComponentSource;
 begin
@@ -292,21 +277,12 @@ begin
   Result := self;
 end;
 
-{ TBaseTarget }
-
 constructor TBaseTarget.Create(BindingState: TBindingState);
 begin
   inherited Create;
   FBindingState := BindingState;
 end;
 
-
-function TBaseTarget.GetBindingState: TBindingState;
-begin
-  Result := FBindingState;
-end;
-
-{ TBaseSource }
 
 constructor TBaseSource.Create(BindingState: TBindingState);
 begin
@@ -340,14 +316,11 @@ begin
   Result := TFieldSource.Create(FBindingState) as IFieldSource;
 end;
 
-{ TBindSourceSource }
-
 function TBindSourceSource.Active: IBindSourceSource;
 begin
   FBindingState.Active := True;
   Result := self;
 end;
-
 
 destructor TBindSourceSource.Destroy;
 var
@@ -367,16 +340,11 @@ begin
   inherited;
 end;
 
-
-
 function TBindSourceSource.Inactive: IBindSourceSource;
 begin
   FBindingState.Active := False;
   Result := self;
 end;
-
-
-{ TListComponentTarget }
 
 function TListComponentTarget.Format(
   CustomFormat: string): IListComponentTarget;
@@ -398,8 +366,6 @@ begin
 
   Result := TFieldSource.Create(FBindingState) as IFieldSource;
 end;
-
-{ TBindingsListHelper }
 
 function TBindingsListHelper.BindComponent(const Target: TComponent): IComponentTarget;
 var
@@ -452,8 +418,6 @@ begin
   Result := TListComponentTarget.Create(LBindingState) as IListComponentTarget;
 end;
 
-{ TExpressionTarget }
-
 function TExpressionTarget.ToExpression(Scope: TComponent;
   Expression: string): IExpressionSource;
 begin
@@ -462,8 +426,6 @@ begin
 
   Result := TExpressionSource.Create(FBindingState) as IExpressionSource;
 end;
-
-{ TExpressionSource }
 
 function TExpressionSource.Active: IExpressionSource;
 begin
@@ -515,9 +477,6 @@ begin
   Result := self;
 end;
 
-
-{ TGridTarget }
-
 function TGridTarget.DefaultColumnWidth(Width: Integer): IGridTarget;
 begin
   FBindingState.DefaultColumnWidth := Width;
@@ -530,8 +489,6 @@ begin
 
   Result := TBindSourceSource.Create(FBindingState) as IBindSourceSource;
 end;
-
-{ TFieldSource }
 
 function TFieldSource.BiDirectional: IFieldSource;
 begin
@@ -580,12 +537,6 @@ begin
 
   inherited;
 end;
-
-//function TFieldSource.Field(Fieldname: string): IFieldSource;
-//begin
-//  FBindingState.Field := Fieldname;
-//  Result := self;
-//end;
 
 function TFieldSource.FromComponentToData: IFieldSource;
 begin
