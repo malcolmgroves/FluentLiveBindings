@@ -1,0 +1,324 @@
+object Form4: TForm4
+  Left = 0
+  Top = 0
+  Caption = 'Form4'
+  ClientHeight = 480
+  ClientWidth = 788
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object Layout1: TLayout
+    Align = Top
+    Size.Width = 788.000000000000000000
+    Size.Height = 257.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 9
+    object GroupBox1: TGroupBox
+      Align = Left
+      Size.Width = 377.000000000000000000
+      Size.Height = 257.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Component Binding'
+      TabOrder = 0
+      object Button1: TButton
+        Position.X = 288.000000000000000000
+        Position.Y = 48.000000000000000000
+        TabOrder = 0
+        Text = 'Bind'
+        OnClick = Button1Click
+      end
+      object Button2: TButton
+        Position.X = 288.000000000000000000
+        Position.Y = 72.000000000000000000
+        TabOrder = 1
+        Text = 'Bind'
+        OnClick = Button2Click
+      end
+      object Button3: TButton
+        Position.X = 288.000000000000000000
+        Position.Y = 96.000000000000000000
+        TabOrder = 2
+        Text = 'Bind'
+        OnClick = Button3Click
+      end
+      object Button4: TButton
+        Position.X = 288.000000000000000000
+        Position.Y = 152.000000000000000000
+        Size.Width = 81.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 3
+        Text = 'Bind'
+        OnClick = Button4Click
+      end
+      object Button6: TButton
+        Position.X = 288.000000000000000000
+        Position.Y = 209.000000000000000000
+        TabOrder = 4
+        Text = 'Bind'
+        OnClick = Button6Click
+      end
+      object Button7: TButton
+        Position.X = 288.000000000000000000
+        Position.Y = 178.000000000000000000
+        TabOrder = 5
+        Text = 'Bind'
+        OnClick = Button7Click
+      end
+      object CheckBox1: TCheckBox
+        Position.X = 16.000000000000000000
+        Position.Y = 94.000000000000000000
+        TabOrder = 6
+        Text = 'CheckBox1'
+      end
+      object CheckBox2: TCheckBox
+        Position.X = 144.000000000000000000
+        Position.Y = 94.000000000000000000
+        TabOrder = 7
+        Text = 'CheckBox2'
+      end
+      object CheckBox3: TCheckBox
+        Position.X = 144.000000000000000000
+        Position.Y = 214.000000000000000000
+        TabOrder = 8
+        Text = 'CheckBox3'
+      end
+      object CheckBox4: TCheckBox
+        Position.X = 16.000000000000000000
+        Position.Y = 177.000000000000000000
+        TabOrder = 9
+        Text = 'CheckBox4'
+      end
+      object Edit1: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 10
+        Text = 'Label1'
+        Position.X = 16.000000000000000000
+        Position.Y = 24.000000000000000000
+      end
+      object Edit2: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 11
+        Position.X = 16.000000000000000000
+        Position.Y = 48.000000000000000000
+      end
+      object Edit3: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 12
+        Position.X = 16.000000000000000000
+        Position.Y = 72.000000000000000000
+      end
+      object Edit4: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 13
+        Position.X = 144.000000000000000000
+        Position.Y = 72.000000000000000000
+      end
+      object Edit5: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 14
+        Position.X = 16.000000000000000000
+        Position.Y = 150.000000000000000000
+        OnChange = Edit5Change
+      end
+      object Edit6: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 15
+        Position.X = 144.000000000000000000
+        Position.Y = 151.000000000000000000
+        Size.Width = 129.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        object EditButton1: TEditButton
+          CanFocus = False
+          Cursor = crArrow
+          Size.Width = 57.000000000000000000
+          Size.Height = 18.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          Text = 'Refresh'
+          OnClick = EditButton1Click
+        end
+      end
+      object Edit7: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 16
+        Position.X = 16.000000000000000000
+        Position.Y = 211.000000000000000000
+      end
+      object Edit8: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 17
+        Position.X = 144.000000000000000000
+        Position.Y = 179.000000000000000000
+      end
+      object Label1: TLabel
+        Position.X = 144.000000000000000000
+        Position.Y = 24.000000000000000000
+        Text = 'Label1'
+        TabOrder = 18
+      end
+      object Label2: TLabel
+        Position.X = 144.000000000000000000
+        Position.Y = 51.000000000000000000
+        Text = 'Label2'
+        TabOrder = 19
+      end
+      object Edit11: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Position.X = 16.000000000000000000
+        Position.Y = 120.000000000000000000
+      end
+      object Button5: TButton
+        Position.X = 288.000000000000000000
+        Position.Y = 120.000000000000000000
+        Text = 'Bind'
+        OnClick = Button5Click
+      end
+    end
+    object GroupBox2: TGroupBox
+      Align = Client
+      Size.Width = 411.000000000000000000
+      Size.Height = 257.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'ListControl Binding'
+      TabOrder = 1
+      object BindNavigator1: TBindNavigator
+        Position.X = 8.000000000000000000
+        Position.Y = 24.000000000000000000
+        Size.Width = 240.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        DataSource = BindSourceDB1
+        xRadius = 4.000000000000000000
+        yRadius = 4.000000000000000000
+      end
+      object ListBox1: TListBox
+        Position.X = 8.000000000000000000
+        Position.Y = 56.000000000000000000
+        Size.Width = 241.000000000000000000
+        Size.Height = 145.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        DisableFocusEffect = True
+        DefaultItemStyles.ItemStyle = ''
+        DefaultItemStyles.GroupHeaderStyle = ''
+        DefaultItemStyles.GroupFooterStyle = ''
+        Viewport.Width = 237.000000000000000000
+        Viewport.Height = 141.000000000000000000
+      end
+      object Button8: TButton
+        Position.X = 264.000000000000000000
+        Position.Y = 25.000000000000000000
+        TabOrder = 4
+        Text = 'Bind'
+        OnClick = Button8Click
+      end
+      object Edit9: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 6
+        Position.X = 264.000000000000000000
+        Position.Y = 56.000000000000000000
+        Size.Width = 121.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object Edit10: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 7
+        Position.X = 264.000000000000000000
+        Position.Y = 88.000000000000000000
+        Size.Width = 121.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+    end
+  end
+  object Layout2: TLayout
+    Align = Client
+    Size.Width = 788.000000000000000000
+    Size.Height = 223.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 10
+    object GroupBox3: TGroupBox
+      Align = Client
+      Size.Width = 788.000000000000000000
+      Size.Height = 223.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Grid Binding'
+      TabOrder = 0
+      object Layout3: TLayout
+        Align = Top
+        Size.Width = 788.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        object Button15: TButton
+          Position.X = 16.000000000000000000
+          Position.Y = 19.000000000000000000
+          TabOrder = 0
+          Text = 'Bind'
+          OnClick = Button15Click
+        end
+      end
+      object StringGrid2: TStringGrid
+        Align = Client
+        CanFocus = True
+        ClipChildren = True
+        Size.Width = 788.000000000000000000
+        Size.Height = 173.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        Viewport.Width = 784.000000000000000000
+        Viewport.Height = 148.000000000000000000
+      end
+    end
+  end
+  object BindingsList1: TBindingsList
+    Methods = <>
+    OutputConverters = <>
+    Left = 388
+    Top = 269
+    object LinkControlToPropertyText: TLinkControlToProperty
+      Category = 'Quick Bindings'
+      Control = Edit1
+      Track = True
+      Component = Label1
+      ComponentProperty = 'Text'
+      CustomFormat = '"Foo " + %s'
+    end
+    object BindExpression1: TBindExpression
+      Category = 'Binding Expressions'
+      NotifyOutputs = False
+      Direction = dirSourceToControl
+    end
+  end
+  object ClientDataSet1: TClientDataSet
+    PersistDataPacket.Data = {
+      550000009619E0BD010000001800000002000000000003000000550009466972
+      73746E616D650100490000000100055749445448020002003200084C6173746E
+      616D6501004900000001000557494454480200020032000000}
+    Active = True
+    Aggregates = <>
+    Params = <>
+    Left = 584
+    Top = 272
+    object ClientDataSet1Firstname: TStringField
+      FieldName = 'Firstname'
+      Size = 50
+    end
+    object ClientDataSet1Lastname: TStringField
+      FieldName = 'Lastname'
+      Size = 50
+    end
+  end
+  object BindSourceDB1: TBindSourceDB
+    DataSet = ClientDataSet1
+    ScopeMappings = <>
+    Left = 488
+    Top = 272
+  end
+end
