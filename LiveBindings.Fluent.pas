@@ -86,10 +86,11 @@ type
 
 
   TBindingsListHelper = class helper for TBindingsList
-    function BindComponent(const Target : TComponent) : IComponentTarget;
-    function BindList(const Target : TComponent) : IListComponentTarget; virtual;
-    function BindGrid(const Target : TCustomGrid) : IGridTarget; virtual;
-    function BindExpression(const Scope : TComponent; Expression : string) : IExpressionTarget; experimental;
+  public
+    function BindComponent(const Target : TComponent; const BindingOwner : TComponent = nil) : IComponentTarget;
+    function BindList(const Target : TComponent; const BindingOwner : TComponent = nil) : IListComponentTarget; virtual;
+    function BindGrid(const Target : TCustomGrid; const BindingOwner : TComponent = nil) : IGridTarget; virtual;
+    function BindExpression(const Scope : TComponent; Expression : string; const BindingOwner : TComponent = nil) : IExpressionTarget; overload; experimental;
   end;
 
 implementation
@@ -104,6 +105,7 @@ type
     FPropertyName: String;
     FActive : Boolean;
     FBindingsList : TBindingsList;
+    FBindingOwner : TComponent;
     FTrack: Boolean;
     FField: string;
     FDirection: TBindDirection;
@@ -114,8 +116,9 @@ type
     FTargetType: TTargetType;
     FDefaultColumnWidth: Integer;
   public
-    constructor Create(BindingsList : TBindingsList); virtual;
+    constructor Create(BindingsList : TBindingsList; BindingOwner : TComponent); virtual;
     property BindingsList : TBindingsList read FBindingsList;
+    property BindingOwner : TComponent read FBindingOwner;
     property Target : TObject read FTarget write FTarget;
     property TargetType : TTargetType read FTargetType write FTargetType;
     property TargetExpression: string read FTargetExpression write FTargetExpression;
@@ -208,7 +211,7 @@ type
 
 
 
-constructor TBindingState.Create(BindingsList: TBindingsList);
+constructor TBindingState.Create(BindingsList: TBindingsList; BindingOwner : TComponent);
 begin
   FBindingsList := BindingsList;
   FActive := True;
@@ -250,7 +253,7 @@ var
 begin
   if (FBindingState.Direction = TBindDirection.TargetToSource) or (FBindingState.Direction = TBindDirection.Bidirectional) then
   begin
-    LLink := TLinkControlToProperty.Create(nil);
+    LLink := TLinkControlToProperty.Create(FBindingState.BindingOwner);
     LLink.BindingsList := FBindingState.BindingsList;
     LLink.Control := TComponent(FBindingState.Target);
     LLink.Component := TComponent(FBindingState.Source);
@@ -263,7 +266,7 @@ begin
 
   if (FBindingState.Direction = TBindDirection.SourceToTarget) or (FBindingState.Direction = TBindDirection.Bidirectional) then
   begin
-    LLink := TLinkControlToProperty.Create(nil);
+    LLink := TLinkControlToProperty.Create(FBindingState.BindingOwner);
     LLink.BindingsList := FBindingState.BindingsList;
     LLink.Control := TComponent(FBindingState.Source);
     LLink.Component := TComponent(FBindingState.Target);
@@ -346,7 +349,7 @@ var
 begin
   if FBindingState.TargetType = Grid then
   begin
-    LGridLink := TLinkGridToDataSource.Create(nil);
+    LGridLink := TLinkGridToDataSource.Create(FBindingState.BindingOwner);
     LGridLink.BindingsList := FBindingState.BindingsList;
     LGridLink.GridControl := TComponent(FBindingState.Target);
     LGridLink.DataSource := TBindSourceDB(FBindingState.FSource);
@@ -385,11 +388,12 @@ begin
   Result := TFieldSource.Create(FBindingState) as IFieldSource;
 end;
 
-function TBindingsListHelper.BindComponent(const Target: TComponent): IComponentTarget;
+function TBindingsListHelper.BindComponent(const Target: TComponent;
+  const BindingOwner : TComponent): IComponentTarget;
 var
   LBindingState : TBindingState;
 begin
-  LBindingState := TBindingState.Create(self);
+  LBindingState := TBindingState.Create(self, BindingOwner);
   LBindingState.Target := Target;
   LBindingState.TargetType := Control;
   LBindingState.Direction := TargetToSource;
@@ -398,11 +402,11 @@ begin
 end;
 
 function TBindingsListHelper.BindExpression(const Scope: TComponent;
-  Expression: string): IExpressionTarget;
+  Expression: string; const BindingOwner : TComponent): IExpressionTarget;
 var
   LBindingState : TBindingState;
 begin
-  LBindingState := TBindingState.Create(self);
+  LBindingState := TBindingState.Create(self, BindingOwner);
   LBindingState.Target := Scope;
   LBindingState.TargetExpression := Expression;
   LBindingState.Direction := TargetToSource;
@@ -410,11 +414,12 @@ begin
   Result := TExpressionTarget.Create(LBindingState) as IExpressionTarget;
 end;
 
-function TBindingsListHelper.BindGrid(const Target: TCustomGrid): IGridTarget;
+function TBindingsListHelper.BindGrid(const Target: TCustomGrid;
+  const BindingOwner : TComponent): IGridTarget;
 var
   LBindingState : TBindingState;
 begin
-  LBindingState := TBindingState.Create(self);
+  LBindingState := TBindingState.Create(self, BindingOwner);
   LBindingState.Target := Target;
   LBindingState.TargetType := Grid;
   LBindingState.DefaultColumnWidth := 64;
@@ -424,11 +429,11 @@ begin
 end;
 
 function TBindingsListHelper.BindList(
-  const Target: TComponent): IListComponentTarget;
+  const Target: TComponent; const BindingOwner : TComponent): IListComponentTarget;
 var
   LBindingState : TBindingState;
 begin
-  LBindingState := TBindingState.Create(self);
+  LBindingState := TBindingState.Create(self, BindingOwner);
   LBindingState.Target := Target;
   LBindingState.TargetType := List;
   LBindingState.Direction := Bidirectional;
@@ -461,7 +466,7 @@ destructor TExpressionSource.Destroy;
 var
   LLink : TBindExpression;
 begin
-  LLink := TBindExpression.Create(nil);
+  LLink := TBindExpression.Create(FBindingState.BindingOwner);
   LLink.BindingsList := FBindingState.BindingsList;
   LLink.ControlComponent := TComponent(FBindingState.Target);
   LLink.ControlExpression := FBindingState.TargetExpression;
@@ -521,7 +526,7 @@ var
 begin
   if FBindingState.TargetType = List then
   begin
-    LListLink := TLinkListControlToField.Create(nil);
+    LListLink := TLinkListControlToField.Create(FBindingState.BindingOwner);
     LListLink.BindingsList := FBindingState.BindingsList;
     LListLink.Control := TComponent(FBindingState.Target);
     LListLink.DataSource := TBindSourceDB(FBindingState.FSource);
@@ -537,7 +542,7 @@ begin
   end
   else if FBindingState.TargetType = Control then
   begin
-    LLink := TLinkControlToField.Create(nil);
+    LLink := TLinkControlToField.Create(FBindingState.BindingOwner);
     LLink.BindingsList := FBindingState.BindingsList;
     LLink.Control := TComponent(FBindingState.Target);
     LLink.DataSource := TBindSourceDB(FBindingState.FSource);
