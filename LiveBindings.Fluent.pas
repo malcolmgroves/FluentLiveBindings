@@ -20,7 +20,7 @@ unit LiveBindings.Fluent;
 
 interface
 uses
-  Data.Bind.Components, Classes, Data.Bind.DBScope, FMX.Grid;
+  Data.Bind.Components, Classes, Data.Bind.DBScope, Data.Bind.ObjectScope, FMX.Grid;
 
 type
   TBindDirection = (TargetToSource, SourceToTarget, Bidirectional);
@@ -48,6 +48,14 @@ type
     function FromDataToComponent : IFieldSource;
   end;
 
+  IObjectSource = interface (IBindSourceSource)
+  ['{FCD6AC1E-CB2D-409D-A433-82E04AD21401}']
+    function BiDirectional : IObjectSource;
+    function FromComponentToData : IObjectSource;
+    function FromDataToComponent : IObjectSource;
+  end;
+
+
   IExpressionSource = interface
   ['{56247E48-C735-4FD8-831E-6AB36C0C3C71}']
     function Active : IExpressionSource;
@@ -64,6 +72,7 @@ type
     function Track : IComponentTarget;
     function ToComponent(Name : TComponent; PropertyName : string): IComponentSource;
     function ToField(Name : TBindSourceDB; Field : String): IFieldSource;
+    function ToObject(Name : TAdapterBindSource; Member : string): IObjectSource;
   end;
 
   IListComponentTarget = interface
@@ -71,6 +80,7 @@ type
     function Format(CustomFormat : string) : IListComponentTarget;
     function Parse(CustomParse : string) : IListComponentTarget;
     function ToField(Name : TBindSourceDB; Field : string): IFieldSource;
+    function ToObject(Name : TAdapterBindSource; Member : string): IObjectSource;
   end;
 
   IExpressionTarget = interface
@@ -165,6 +175,14 @@ type
     function FromDataToComponent : IFieldSource;
   end;
 
+  TObjectSource = class(TBindSourceSource, IObjectSource)
+  public
+    destructor Destroy; override;
+    function BiDirectional : IObjectSource;
+    function FromComponentToData : IObjectSource;
+    function FromDataToComponent : IObjectSource;
+  end;
+
   TExpressionSource = class(TBaseSource, IExpressionSource)
   public
     destructor Destroy; override;
@@ -189,12 +207,14 @@ type
     function Track : IComponentTarget;
     function ToComponent(Name : TComponent; PropertyName : string): IComponentSource;
     function ToField(Name : TBindSourceDB; Field : String): IFieldSource;
+    function ToObject(Name : TAdapterBindSource; Member : string): IObjectSource;
   end;
 
   TListComponentTarget = class(TBaseTarget, IListComponentTarget)
     function Format(CustomFormat : string) : IListComponentTarget;
     function Parse(CustomParse : string) : IListComponentTarget;
     function ToField(Name : TBindSourceDB; Field : string): IFieldSource;
+    function ToObject(Name : TAdapterBindSource; Member : string): IObjectSource;
   end;
 
   TExpressionTarget = class(TBaseTarget, IExpressionTarget)
@@ -334,6 +354,16 @@ begin
   Result := TFieldSource.Create(FBindingState) as IFieldSource;
 end;
 
+function TComponentTarget.ToObject(Name: TAdapterBindSource;
+  Member: string): IObjectSource;
+begin
+  FBindingState.Source := Name;
+  FBindingState.Direction := Bidirectional;
+  FBindingState.Field := Member;
+
+  Result := TObjectSource.Create(FBindingState) as IObjectSource;
+end;
+
 function TBindSourceSource.Active: IBindSourceSource;
 begin
   FBindingState.Active := True;
@@ -383,6 +413,15 @@ begin
   FBindingState.Field := Field;
 
   Result := TFieldSource.Create(FBindingState) as IFieldSource;
+end;
+
+function TListComponentTarget.ToObject(Name: TAdapterBindSource;
+  Member: string): IObjectSource;
+begin
+  FBindingState.Source := Name;
+  FBindingState.Field := Member;
+
+  Result := TObjectSource.Create(FBindingState) as IObjectSource;
 end;
 
 function TBindingsListHelper.BindComponent(const Target: TComponent): IComponentTarget;
@@ -563,6 +602,67 @@ begin
 end;
 
 function TFieldSource.FromDataToComponent: IFieldSource;
+begin
+  FBindingState.Direction := TBindDirection.SourceToTarget;
+  Result := self;
+end;
+
+{ TObjectSource }
+
+function TObjectSource.BiDirectional: IObjectSource;
+begin
+  FBindingState.Direction := TBindDirection.Bidirectional;
+  Result := self;
+end;
+
+destructor TObjectSource.Destroy;
+var
+  LLink : TLinkControlToField;
+  LListLink : TLinkListControlToField;
+begin
+  if FBindingState.TargetType = List then
+  begin
+    LListLink := TLinkListControlToField.Create(nil);
+    LListLink.BindingsList := FBindingState.BindingsList;
+    LListLink.Control := TComponent(FBindingState.Target);
+    LListLink.DataSource := TAdapterBindSource(FBindingState.FSource);
+    LListLink.FieldName := FBindingState.Field;
+    LListLink.CustomFormat := FBindingState.Format;
+    LListLink.CustomParse := FBindingState.Parse;
+    case FBindingState.Direction of
+      TBindDirection.TargetToSource: LListLink.Direction := linkControlToData;
+      TBindDirection.SourceToTarget: LListLink.Direction := linkDataToControl;
+      TBindDirection.Bidirectional: LListLink.Direction := linkBidirectional;
+    end;
+    LListLink.Active := FBindingState.Active;
+  end
+  else if FBindingState.TargetType = Control then
+  begin
+    LLink := TLinkControlToField.Create(nil);
+    LLink.BindingsList := FBindingState.BindingsList;
+    LLink.Control := TComponent(FBindingState.Target);
+    LLink.DataSource := TAdapterBindSource(FBindingState.FSource);
+    LLink.FieldName := FBindingState.Field;
+    LLink.CustomFormat := FBindingState.Format;
+    LLink.CustomParse := FBindingState.Parse;
+    case FBindingState.Direction of
+      TBindDirection.TargetToSource: LLink.Direction := linkControlToData;
+      TBindDirection.SourceToTarget: LLink.Direction := linkDataToControl;
+      TBindDirection.Bidirectional: LLink.Direction := linkBidirectional;
+    end;
+    LLink.Track := FBindingState.Track;
+    LLink.Active := FBindingState.Active;
+  end;
+  inherited;
+end;
+
+function TObjectSource.FromComponentToData: IObjectSource;
+begin
+  FBindingState.Direction := TBindDirection.TargetToSource;
+  Result := self;
+end;
+
+function TObjectSource.FromDataToComponent: IObjectSource;
 begin
   FBindingState.Direction := TBindDirection.SourceToTarget;
   Result := self;

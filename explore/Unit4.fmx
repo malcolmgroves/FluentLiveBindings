@@ -2,7 +2,7 @@ object Form4: TForm4
   Left = 0
   Top = 0
   Caption = 'Form4'
-  ClientHeight = 480
+  ClientHeight = 763
   ClientWidth = 788
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -12,13 +12,13 @@ object Form4: TForm4
   object Layout1: TLayout
     Align = Top
     Size.Width = 788.000000000000000000
-    Size.Height = 257.000000000000000000
+    Size.Height = 545.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 9
     object GroupBox1: TGroupBox
       Align = Left
-      Size.Width = 377.000000000000000000
-      Size.Height = 257.000000000000000000
+      Size.Width = 385.000000000000000000
+      Size.Height = 545.000000000000000000
       Size.PlatformDefault = False
       Text = 'Component Binding'
       TabOrder = 0
@@ -180,8 +180,8 @@ object Form4: TForm4
     end
     object GroupBox2: TGroupBox
       Align = Client
-      Size.Width = 411.000000000000000000
-      Size.Height = 257.000000000000000000
+      Size.Width = 403.000000000000000000
+      Size.Height = 545.000000000000000000
       Size.PlatformDefault = False
       Text = 'ListControl Binding'
       TabOrder = 1
@@ -235,18 +235,122 @@ object Form4: TForm4
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
       end
+      object GroupBox4: TGroupBox
+        Align = Bottom
+        Position.Y = 209.000000000000000000
+        Size.Width = 403.000000000000000000
+        Size.Height = 336.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'TObject Binding'
+        TabOrder = 38
+        OnClick = GroupBox4Click
+        object Edit12: TEdit
+          Touch.InteractiveGestures = [LongTap, DoubleTap]
+          TabOrder = 38
+          Position.X = 8.000000000000000000
+          Position.Y = 24.000000000000000000
+          OnChange = Edit12Change
+          object Label3: TLabel
+            Position.X = 117.000000000000000000
+            Text = 'Label3'
+            TabOrder = 0
+          end
+        end
+        object Button9: TButton
+          Position.X = 224.000000000000000000
+          Position.Y = 24.000000000000000000
+          TabOrder = 39
+          Text = 'Refresh'
+          OnClick = Button9Click
+          object Button10: TButton
+            Position.X = 88.000000000000000000
+            TabOrder = 5
+            Text = 'Bind'
+            OnClick = Button10Click
+          end
+        end
+        object BindNavigator2: TBindNavigator
+          Position.X = 8.000000000000000000
+          Position.Y = 72.000000000000000000
+          Size.Width = 241.000000000000000000
+          Size.Height = 25.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 40
+          DataSource = AdapterBindSource2
+          xRadius = 4.000000000000000000
+          yRadius = 4.000000000000000000
+          object Button11: TButton
+            Position.X = 248.000000000000000000
+            TabOrder = 0
+            Text = 'Bind'
+            OnClick = Button11Click
+          end
+        end
+        object ListBox2: TListBox
+          Position.X = 8.000000000000000000
+          Position.Y = 105.000000000000000000
+          Size.Width = 176.000000000000000000
+          Size.Height = 96.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 41
+          DisableFocusEffect = True
+          DefaultItemStyles.ItemStyle = ''
+          DefaultItemStyles.GroupHeaderStyle = ''
+          DefaultItemStyles.GroupFooterStyle = ''
+          Viewport.Width = 172.000000000000000000
+          Viewport.Height = 92.000000000000000000
+        end
+        object Edit13: TEdit
+          Touch.InteractiveGestures = [LongTap, DoubleTap]
+          TabOrder = 42
+          Position.X = 192.000000000000000000
+          Position.Y = 102.000000000000000000
+        end
+        object ListBox3: TListBox
+          Position.X = 192.000000000000000000
+          Position.Y = 132.000000000000000000
+          Size.Width = 97.000000000000000000
+          Size.Height = 69.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 43
+          DisableFocusEffect = True
+          DefaultItemStyles.ItemStyle = ''
+          DefaultItemStyles.GroupHeaderStyle = ''
+          DefaultItemStyles.GroupFooterStyle = ''
+          Viewport.Width = 93.000000000000000000
+          Viewport.Height = 65.000000000000000000
+        end
+        object StringGrid1: TStringGrid
+          CanFocus = True
+          ClipChildren = True
+          Position.X = 8.000000000000000000
+          Position.Y = 209.000000000000000000
+          Size.Width = 225.000000000000000000
+          Size.Height = 119.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 44
+          Viewport.Width = 221.000000000000000000
+          Viewport.Height = 94.000000000000000000
+        end
+        object Button13: TButton
+          Position.X = 241.000000000000000000
+          Position.Y = 209.000000000000000000
+          TabOrder = 45
+          Text = 'Bind Grid'
+        end
+      end
     end
   end
   object Layout2: TLayout
     Align = Client
     Size.Width = 788.000000000000000000
-    Size.Height = 223.000000000000000000
+    Size.Height = 218.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 10
     object GroupBox3: TGroupBox
       Align = Client
       Size.Width = 788.000000000000000000
-      Size.Height = 223.000000000000000000
+      Size.Height = 218.000000000000000000
       Size.PlatformDefault = False
       Text = 'Grid Binding'
       TabOrder = 0
@@ -269,19 +373,26 @@ object Form4: TForm4
         CanFocus = True
         ClipChildren = True
         Size.Width = 788.000000000000000000
-        Size.Height = 173.000000000000000000
+        Size.Height = 168.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 2
         Viewport.Width = 784.000000000000000000
-        Viewport.Height = 148.000000000000000000
+        Viewport.Height = 143.000000000000000000
       end
     end
+  end
+  object Button12: TButton
+    Position.X = 682.000000000000000000
+    Position.Y = 341.000000000000000000
+    TabOrder = 17
+    Text = 'Refresh'
+    OnClick = Button12Click
   end
   object BindingsList1: TBindingsList
     Methods = <>
     OutputConverters = <>
-    Left = 388
-    Top = 269
+    Left = 108
+    Top = 261
     object LinkControlToPropertyText: TLinkControlToProperty
       Category = 'Quick Bindings'
       Control = Edit1
@@ -304,8 +415,8 @@ object Form4: TForm4
     Active = True
     Aggregates = <>
     Params = <>
-    Left = 584
-    Top = 272
+    Left = 272
+    Top = 264
     object ClientDataSet1Firstname: TStringField
       FieldName = 'Firstname'
       Size = 50
@@ -318,7 +429,35 @@ object Form4: TForm4
   object BindSourceDB1: TBindSourceDB
     DataSet = ClientDataSet1
     ScopeMappings = <>
-    Left = 488
+    Left = 176
+    Top = 264
+  end
+  object AdapterBindSource1: TAdapterBindSource
+    AutoActivate = True
+    OnCreateAdapter = AdapterBindSource1CreateAdapter
+    Adapter = DataGeneratorAdapter1
+    ScopeMappings = <>
+    Left = 16
+    Top = 264
+  end
+  object DataGeneratorAdapter1: TDataGeneratorAdapter
+    FieldDefs = <
+      item
+        Name = 'Firstname'
+        Generator = 'ColorsNames'
+        ReadOnly = False
+      end>
+    Active = True
+    AutoPost = False
+    Options = [loptAllowInsert, loptAllowDelete, loptAllowModify]
+    Left = 72
     Top = 272
+  end
+  object AdapterBindSource2: TAdapterBindSource
+    AutoActivate = True
+    OnCreateAdapter = AdapterBindSource2CreateAdapter
+    ScopeMappings = <>
+    Left = 384
+    Top = 368
   end
 end
