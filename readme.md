@@ -41,7 +41,7 @@ BindingsList1.BindComponent(Edit2).ToComponent(Edit3, 'Text').BiDirectional;
 ````
 
 
-Have a look in the example project for more, errr, examples. 
+Have a look in the example project for more, errr, examples. There's also support for Grids ands Lists. Most things you can do through the LiveBinings Designer you should be able to do using Fluent LiveBindings.  
 
 ## Disclaimers
 First, this is just about creating the bindings. Once created, they behave the same as if you had created them visually. There's no overhead added once you've created them. Equally, if you dislike LiveBindings for some reason other than how hard they are to create in code, this won't solve that for you. 
